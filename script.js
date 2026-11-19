@@ -4,8 +4,21 @@ const productsContainer = document.getElementById("productsContainer");
 const selectedProductsList = document.getElementById("selectedProductsList");
 const chatForm = document.getElementById("chatForm");
 const chatWindow = document.getElementById("chatWindow");
+const generateRoutineButton = document.getElementById("generateRoutine");
 const selectedProducts = [];
 let displayedProducts = [];
+
+/* Keep the full conversation so the AI can answer follow-up questions */
+const conversationMessages = [
+  {
+    role: "system",
+    content:
+      "You are a friendly L'Oréal skincare and beauty advisor. Create safe, practical routines using only the selected products the user provides.",
+  },
+];
+
+/* Class-hosted Worker URL; no API key is needed in this browser code */
+const workerUrl = "https://chatbot.kzhao-f2d.workers.dev/";
 
 /* Show initial placeholder until user selects a category */
 productsContainer.innerHTML = `
@@ -174,9 +187,93 @@ categoryFilter.addEventListener("change", async (e) => {
 
 displaySelectedProducts();
 
-/* Chat form submission handler - placeholder for OpenAI integration */
-chatForm.addEventListener("submit", (e) => {
+/* Send messages to the Worker and return the AI's reply */
+async function sendToWorker(message) {
+  conversationMessages.push({ role: "user", content: message });
+
+  const response = await fetch(workerUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: conversationMessages }),
+  });
+
+  if (!response.ok) {
+    throw new Error("The routine advisor could not respond.");
+  }
+
+  const data = await response.json();
+  const reply = data.choices[0].message.content;
+
+  /* Save the assistant reply for future follow-up questions */
+  conversationMessages.push({ role: "assistant", content: reply });
+  return reply;
+}
+
+/* Show text in the chat window safely */
+function displayChatMessage(text, className) {
+  const messageElement = document.createElement("div");
+  messageElement.className = className;
+  messageElement.textContent = text;
+  chatWindow.appendChild(messageElement);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+/* Generate a routine using only the selected product data */
+generateRoutineButton.addEventListener("click", async () => {
+  if (selectedProducts.length === 0) {
+    chatWindow.innerHTML = "";
+    displayChatMessage(
+      "Please select at least one product before generating a routine.",
+      "chat-message chat-error"
+    );
+    return;
+  }
+
+  /* Send only fields needed to personalize the routine */
+  const selectedProductData = selectedProducts.map((product) => ({
+    name: product.name,
+    brand: product.brand,
+    category: product.category,
+    description: product.description,
+  }));
+
+  const prompt = `Create a personalized, step-by-step L'Oréal routine using only these selected products. Explain the purpose of each step and keep the instructions safe and easy to follow.\n\nSelected products:\n${JSON.stringify(
+    selectedProductData,
+    null,
+    2
+  )}`;
+
+  chatWindow.innerHTML = "";
+  displayChatMessage("Generating your personalized routine...", "chat-message chat-loading");
+  generateRoutineButton.disabled = true;
+
+  try {
+    const reply = await sendToWorker(prompt);
+    chatWindow.innerHTML = "";
+    displayChatMessage(reply, "chat-message chat-assistant");
+  } catch (error) {
+    chatWindow.innerHTML = "";
+    displayChatMessage(error.message, "chat-message chat-error");
+  } finally {
+    generateRoutineButton.disabled = false;
+  }
+});
+
+/* Handle follow-up questions in the chat */
+chatForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  chatWindow.innerHTML = "Connect to the OpenAI API for a response!";
+  const userInput = document.getElementById("userInput");
+  const message = userInput.value.trim();
+  if (!message) return;
+
+  displayChatMessage(message, "chat-message chat-user");
+  userInput.value = "";
+
+  try {
+    const reply = await sendToWorker(message);
+    displayChatMessage(reply, "chat-message chat-assistant");
+  } catch (error) {
+    displayChatMessage(error.message, "chat-message chat-error");
+  }
 });
