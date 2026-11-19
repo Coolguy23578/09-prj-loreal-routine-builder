@@ -5,8 +5,10 @@ const selectedProductsList = document.getElementById("selectedProductsList");
 const chatForm = document.getElementById("chatForm");
 const chatWindow = document.getElementById("chatWindow");
 const generateRoutineButton = document.getElementById("generateRoutine");
+const clearProductsButton = document.getElementById("clearProducts");
 const selectedProducts = [];
 let displayedProducts = [];
+const savedSelectionsKey = "lorealSelectedProductIds";
 
 /* Keep the full conversation so the AI can answer follow-up questions */
 const conversationMessages = [
@@ -32,6 +34,37 @@ async function loadProducts() {
   const response = await fetch("products.json");
   const data = await response.json();
   return data.products;
+}
+
+/* Save the selected product IDs so selections survive a page reload */
+function saveSelectedProducts() {
+  const selectedIds = selectedProducts.map((product) => product.id);
+  localStorage.setItem(savedSelectionsKey, JSON.stringify(selectedIds));
+}
+
+/* Restore full product objects when the page first loads */
+async function restoreSelectedProducts() {
+  let savedIds = [];
+
+  try {
+    savedIds = JSON.parse(localStorage.getItem(savedSelectionsKey)) || [];
+  } catch (error) {
+    localStorage.removeItem(savedSelectionsKey);
+  }
+
+  if (savedIds.length === 0) {
+    displaySelectedProducts();
+    return;
+  }
+
+  const products = await loadProducts();
+  savedIds.forEach((savedId) => {
+    const product = products.find((item) => item.id === savedId);
+    if (product) selectedProducts.push(product);
+  });
+
+  displaySelectedProducts();
+  saveSelectedProducts();
 }
 
 /* Create HTML for displaying product cards */
@@ -120,6 +153,7 @@ function toggleProduct(product) {
   }
 
   displaySelectedProducts();
+  saveSelectedProducts();
   displayProducts(displayedProducts);
 }
 
@@ -167,8 +201,17 @@ selectedProductsList.addEventListener("click", (e) => {
   if (productIndex !== -1) {
     selectedProducts.splice(productIndex, 1);
     displaySelectedProducts();
+    saveSelectedProducts();
     displayProducts(displayedProducts);
   }
+});
+
+/* Clear every saved selection at once */
+clearProductsButton.addEventListener("click", () => {
+  selectedProducts.length = 0;
+  localStorage.removeItem(savedSelectionsKey);
+  displaySelectedProducts();
+  displayProducts(displayedProducts);
 });
 
 /* Filter and display products when category changes */
@@ -185,7 +228,7 @@ categoryFilter.addEventListener("change", async (e) => {
   displayProducts(filteredProducts);
 });
 
-displaySelectedProducts();
+restoreSelectedProducts();
 
 /* Send messages to the Worker and return the AI's reply */
 async function sendToWorker(message) {
