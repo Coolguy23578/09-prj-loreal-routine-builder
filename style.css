@@ -34,6 +34,7 @@ body {
   font-size: 22px;
   font-weight: 500;
   margin-bottom: 10px;
+  color: #ff003b;
 }
 
 /* category filter */
@@ -46,22 +47,24 @@ body {
   width: 100%;
   padding: 16px;
   font-size: 18px;
-  border: 2px solid #000;
+  border: 2px solid #ff003b;
   border-radius: 8px;
   cursor: pointer;
   background-color: white;
   font-weight: 500;
+  color: #ff003b;
 }
 
 .search-section select:focus {
   outline: none;
-  border-color: #666;
+  border-color: #ff003b;
+  box-shadow: 0 0 0 2px rgb(255 0 59 / 20%);
 }
 
 /* chat section */
 .chatbox {
   margin: 40px 0;
-  border: 2px solid #000;
+  border: 2px solid #e3a535;
   border-radius: 8px;
   padding: 26px;
 }
@@ -69,6 +72,7 @@ body {
 .chatbox h2 {
   font-size: 20px;
   margin-bottom: 20px;
+  color: #ff003b;
 }
 
 .chat-window {
@@ -90,8 +94,8 @@ body {
 
 .chat-user {
   margin-left: 15%;
-  background: #000;
-  color: #fff;
+  background: #e3a535;
+  color: #333;
 }
 
 .chat-assistant {
@@ -133,13 +137,13 @@ body {
 
 .chat-form input:focus {
   outline: none;
-  border-bottom-color: #000;
+  border-bottom-color: #e3a535;
 }
 
 .chat-form button {
   font-size: 18px;
-  background: #000;
-  color: #fff;
+  background: #e3a535;
+  color: #333;
   border: none;
   padding: 12px;
   width: 48px;
@@ -152,11 +156,12 @@ body {
 }
 
 .chat-form button:hover {
-  background: #666666;
+  background: #ff003b;
+  color: #fff;
 }
 
 .chat-form button:focus {
-  outline: 2px solid #000;
+  outline: 2px solid #ff003b;
   outline-offset: 2px;
 }
 
@@ -217,13 +222,13 @@ body {
 
 .product-card:hover,
 .product-card:focus {
-  border-color: #666;
+  border-color: #e3a535;
   box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
   outline: none;
 }
 
 .product-card.selected {
-  border: 3px solid #000;
+  border: 3px solid #e3a535;
   padding: 13px;
   background-color: #f5f5f5;
 }
@@ -246,6 +251,7 @@ body {
 .product-card h3 {
   font-size: 16px;
   margin-bottom: 8px;
+  color: #ff003b;
 }
 
 .product-card p {
@@ -257,10 +263,10 @@ body {
   align-self: flex-start;
   margin-top: 10px;
   padding: 6px 10px;
-  border: 1px solid #000;
+  border: 1px solid #e3a535;
   border-radius: 4px;
-  background: #fff;
-  color: #000;
+  background: #e3a535;
+  color: #333;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -268,7 +274,7 @@ body {
 
 .description-toggle:hover,
 .description-toggle:focus {
-  background: #000;
+  background: #ff003b;
   color: #fff;
   outline: none;
 }
@@ -283,13 +289,14 @@ body {
 .selected-products {
   margin: 40px 0;
   padding: 20px;
-  border: 2px solid #000;
+  border: 2px solid #e3a535;
   border-radius: 8px;
 }
 
 .selected-products h2 {
   font-size: 20px;
   margin-bottom: 20px;
+  color: #ff003b;
 }
 
 #selectedProductsList {
@@ -319,23 +326,24 @@ body {
   height: 24px;
   border: none;
   border-radius: 50%;
-  background: #000;
-  color: #fff;
+  background: #e3a535;
+  color: #333;
   cursor: pointer;
 }
 
 .remove-product:hover,
 .remove-product:focus {
-  background: #666;
+  background: #ff003b;
+  color: #fff;
 }
 
 .clear-products-btn {
   display: block;
   margin-top: 16px;
   padding: 8px 12px;
-  border: 1px solid #666;
+  border: 1px solid #e3a535;
   border-radius: 4px;
-  background: #fff;
+  background: #e3a535;
   color: #333;
   font-size: 14px;
   cursor: pointer;
@@ -343,9 +351,10 @@ body {
 
 .clear-products-btn:hover,
 .clear-products-btn:focus {
-  border-color: #000;
-  background: #f5f5f5;
-  outline: 2px solid #000;
+  border-color: #ff003b;
+  background: #ff003b;
+  color: #fff;
+  outline: 2px solid #ff003b;
   outline-offset: 2px;
 }
 
@@ -355,8 +364,8 @@ body {
   padding: 16px;
   font-size: 18px;
   font-weight: 500;
-  color: #fff;
-  background: #000;
+  color: #333;
+  background: #e3a535;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -364,7 +373,8 @@ body {
 }
 
 .generate-btn:hover {
-  background: #666;
+  background: #ff003b;
+  color: #fff;
 }
 
 .generate-btn i {
