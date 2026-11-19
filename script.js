@@ -44,6 +44,21 @@ function displayProducts(products) {
       <div class="product-info">
         <h3>${product.name}</h3>
         <p>${product.brand}</p>
+        <button
+          type="button"
+          class="description-toggle"
+          aria-expanded="false"
+          aria-controls="description-${product.id}"
+        >
+          View details
+        </button>
+        <p
+          id="description-${product.id}"
+          class="product-description"
+          hidden
+        >
+          ${product.description}
+        </p>
       </div>
     </div>
   `
@@ -97,6 +112,19 @@ function toggleProduct(product) {
 
 /* Handle clicks on product cards */
 productsContainer.addEventListener("click", (e) => {
+  /* Let the details button expand text without selecting the product */
+  const descriptionButton = e.target.closest(".description-toggle");
+  if (descriptionButton) {
+    const card = descriptionButton.closest(".product-card");
+    const description = card.querySelector(".product-description");
+    const isExpanded = descriptionButton.getAttribute("aria-expanded") === "true";
+
+    description.hidden = isExpanded;
+    descriptionButton.setAttribute("aria-expanded", String(!isExpanded));
+    descriptionButton.textContent = isExpanded ? "View details" : "Hide details";
+    return;
+  }
+
   const card = e.target.closest(".product-card");
   if (!card) return;
 
@@ -108,6 +136,8 @@ productsContainer.addEventListener("click", (e) => {
 
 /* Allow keyboard users to select a product card */
 productsContainer.addEventListener("keydown", (e) => {
+  /* The details button already has its own keyboard behavior */
+  if (!e.target.classList.contains("product-card")) return;
   if (e.key !== "Enter" && e.key !== " ") return;
   e.preventDefault();
   e.target.click();
